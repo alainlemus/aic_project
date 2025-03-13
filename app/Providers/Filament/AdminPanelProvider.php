@@ -28,9 +28,9 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->registration() // Habilita el registro
-            ->brandLogo(asset('logo/aic-2.png'))
+            /*->brandLogo(asset('logo/aic-2.png'))
             ->brandLogoHeight('60px') // Altura personalizada
-            ->favicon(asset('logo/aic.png'))
+            ->favicon(asset('logo/aic.png'))*/
             ->colors([
                 'primary' => Color::Red,
             ])

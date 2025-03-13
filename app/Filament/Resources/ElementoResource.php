@@ -42,7 +42,7 @@ class ElementoResource extends Resource
                 Forms\Components\TextInput::make('nombre')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Select::make('unidad_id')
+                Forms\Components\Select::make('id_unidad')
                     ->label('Unidad')
                     ->relationship('unidad', 'nombre') // Relación con el modelo Municipio
                     ->searchable() // Habilita la búsqueda
@@ -106,6 +106,23 @@ class ElementoResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    // Convertir id_unidad a integer antes de crear
+    public static function getModelData(array $data): array
+    {
+        $data['id_unidad'] = (int) $data['id_unidad'];
+        return $data;
+    }
+
+    protected static function mutateFormDataBeforeCreate(array $data): array
+    {
+        return static::getModelData($data);
+    }
+
+    protected static function mutateFormDataBeforeSave(array $data): array
+    {
+        return static::getModelData($data);
     }
 
     public static function getRelations(): array

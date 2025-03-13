@@ -23,6 +23,7 @@ class Elemento extends Model
 
     protected $casts = [
         'status' => 'string', // Para el ENUM
+        'id_unidad' => 'integer',
     ];
 
     public function unidad()
