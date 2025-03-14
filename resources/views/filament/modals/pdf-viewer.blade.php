@@ -1,10 +1,6 @@
 <div>
-    @foreach ($archivos as $archivo)
-        <p>{{ $archivo->nombre }}</p>
-    @endforeach
-    {{ $archivos[0]->url }}
     <iframe
-        src="{{ asset($archivos[0]->url ?? '') }}"
+        src="{{ asset($ruta ?? '') }}"
         width="100%"
         height="600px"
         style="border: none;"

@@ -44,6 +44,7 @@ class UnidadResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->striped()
             ->columns([
                 Tables\Columns\TextColumn::make('nombre')
                     ->searchable(),
@@ -68,7 +69,10 @@ class UnidadResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->emptyStateHeading('Ninguna unidad registrada')
+            ->emptyStateDescription('Cuando registres unidades, apareceran aqui.')
+            ->emptyStateIcon('heroicon-o-bookmark');
     }
 
     public static function getRelations(): array

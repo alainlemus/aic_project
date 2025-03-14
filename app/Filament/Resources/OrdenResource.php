@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\OrdenResource\Pages;
 use App\Http\Livewire\PdfViewer;
+use App\Models\Archivo;
 use App\Models\Elemento;
 use App\Models\Orden;
 use Filament\Forms;
@@ -15,6 +16,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Actions\StaticAction;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Infolists\Components\Livewire;
+use Illuminate\Contracts\View\View;
 
 class OrdenResource extends Resource
 {
@@ -75,6 +77,8 @@ class OrdenResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->striped()
+            ->query(Orden::with('archivos')) // Carga ansiosa de la relación archivos
             ->columns([
                 Tables\Columns\TextColumn::make('nombre')
                     ->searchable(),
@@ -87,7 +91,35 @@ class OrdenResource extends Resource
                     ->label('Elemento')
                     ->sortable()
                     ->searchable()
-                    ->formatStateUsing(fn (string $state, Orden $record) => "{$record->elemento->nombre} {$record->elemento->apellido_paterno}"),
+                    ->formatStateUsing(fn (Orden $record) => "{$record->elemento->nombre} {$record->elemento->apellido_paterno} {$record->elemento->apellido_materno}"),
+                /*Tables\Columns\TextColumn::make('archivos')
+                    ->label('Archivos')
+                    ->formatStateUsing(function (Orden $record) {
+                        \Illuminate\Support\Facades\Log::info("Procesando archivos para orden {$record->id}: " . $record->archivos->toJson());
+
+                        if ($record->archivos->isEmpty()) {
+                            return 'Sin archivos';
+                        }
+
+                        $links = $record->archivos->map(function ($archivo) {
+                            $link = sprintf(
+                                '<a href="#" wire:click.prevent="$dispatch(\'openModal\', { component: \'view_pdf\', arguments: { ruta: \'%s\' } })" class="text-blue-500 hover:underline">%s</a>',
+                                $archivo->url,
+                                $archivo->nombre
+                            );
+                            \Illuminate\Support\Facades\Log::info("Enlace generado para orden {$archivo->orden_id}: {$link}");
+                            return $link;
+                        })->implode('<br>');
+
+                        return $links;
+                    })
+                    ->html(),*/
+                Tables\Columns\ViewColumn::make('archivos')
+                    ->label('Archivos')
+                    ->getStateUsing(function (Orden $record) {
+                        return $record->archivos; // Devuelve la colección de archivos
+                    })
+                    ->view('filament.tables.columns.archivos'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -105,24 +137,25 @@ class OrdenResource extends Resource
                 Tables\Actions\EditAction::make(),
 
                 Action::make('view_pdf')
-                    ->label('Ver Archivos')
-                    ->icon('heroicon-o-eye')
-                    ->color('success')
-                    ->modalHeading('Archivos PDF')
-                    ->modalWidth(MaxWidth::FiveExtraLarge)
-                    ->modalSubmitAction(false)
-                    ->modalCancelAction(fn (StaticAction $action) => $action->label('Cerrar'))
+                    ->label(false) // Oculta el botón en la tabla
+                    ->modalHeading('Visualizar PDF')
                     ->modalContent(function (array $arguments) {
-                        $archivos = $arguments['archivos'] ?? [];
-                        return Livewire::make(PdfViewer::class, ['archivos' => $archivos])->lazy();
-                    }),
+                        $ruta = $arguments['url'] ?? '';
+                        \Illuminate\Support\Facades\Log::info("Abriendo modal con ruta: {$ruta}");
+                        return view('filament.modals.pdf-viewer', ['ruta' => $ruta]);
+                    })
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Cerrar'),
 
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->emptyStateHeading('Ninguna orden registrada')
+            ->emptyStateDescription('Cuando registres las ordenes, apareceran aqui.')
+            ->emptyStateIcon('heroicon-o-bookmark');
 
     }
 

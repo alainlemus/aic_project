@@ -74,6 +74,7 @@ class ElementoResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->striped()
             ->columns([
                 Tables\Columns\TextColumn::make('no_empleado')
                     ->badge()
@@ -119,7 +120,10 @@ class ElementoResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->emptyStateHeading('Ningun elemento registrado')
+            ->emptyStateDescription('Cuando registres elementos, apareceran aqui.')
+            ->emptyStateIcon('heroicon-o-bookmark');
     }
 
     public static function getRelations(): array

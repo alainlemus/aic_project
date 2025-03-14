@@ -28,16 +28,16 @@ class UserResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label('Nombre')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
+                    ->label('E-mail')
                     ->email()
                     ->required()
                     ->maxLength(255),
-                Forms\Components\DateTimePicker::make('email_verified_at')
-                    ->default(now())
-                    ->disabled(),
                 Forms\Components\TextInput::make('password')
+                    ->label('Contraseña')
                     ->password()
                     ->required()
                     ->maxLength(255),
@@ -47,6 +47,7 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->striped()
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
@@ -74,7 +75,10 @@ class UserResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->emptyStateHeading('Ningun usuario registrado')
+            ->emptyStateDescription('Cuando registres usuarios, apareceran aqui.')
+            ->emptyStateIcon('heroicon-o-bookmark');
     }
 
     public static function getRelations(): array

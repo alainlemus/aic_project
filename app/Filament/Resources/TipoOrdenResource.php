@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TipoOrdenResource\Pages;
-use App\Filament\Resources\TipoOrdenResource\RelationManagers;
 use App\Models\TipoOrden;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TipoOrdenResource extends Resource
 {
@@ -19,9 +16,11 @@ class TipoOrdenResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
 
-    protected static ?string $label = 'Tipos';
+    protected static ?string $label = "Tipos";
 
     protected static ?string $navigationGroup = 'Ordenes';
+
+    protected static ?string $navigationBadgeTooltip = 'Número de tipos de orden';
 
     public static function form(Form $form): Form
     {
@@ -36,6 +35,7 @@ class TipoOrdenResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->striped()
             ->columns([
                 Tables\Columns\TextColumn::make('nombre')
                     ->searchable(),
@@ -58,7 +58,10 @@ class TipoOrdenResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->emptyStateHeading('Ningun tipo de orden registrado')
+            ->emptyStateDescription('Cuando registres tipos de orden, apareceran aqui.')
+            ->emptyStateIcon('heroicon-o-bookmark');
     }
 
     public static function getRelations(): array
@@ -76,4 +79,15 @@ class TipoOrdenResource extends Resource
             'edit' => Pages\EditTipoOrden::route('/{record}/edit'),
         ];
     }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'info';
+    }
+
 }

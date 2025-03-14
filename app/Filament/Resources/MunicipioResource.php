@@ -39,6 +39,7 @@ class MunicipioResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->striped()
             ->columns([
                 Tables\Columns\TextColumn::make('nombre')
                     ->searchable(),
@@ -63,7 +64,10 @@ class MunicipioResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->emptyStateHeading('Ninguna municipio registrado')
+            ->emptyStateDescription('Cuando registres municipios, apareceran aqui.')
+            ->emptyStateIcon('heroicon-o-bookmark');
     }
 
     public static function getRelations(): array

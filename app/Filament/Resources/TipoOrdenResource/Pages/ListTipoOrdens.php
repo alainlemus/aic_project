@@ -13,7 +13,7 @@ class ListTipoOrdens extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->label('Agregar Tipo de Orden'),
+            Actions\CreateAction::make()->label('Agregar tipo de orden'),
         ];
     }
 }

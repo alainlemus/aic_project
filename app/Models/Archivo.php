@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Archivo extends Model
 {
     protected $table = 'archivos';
-    protected $fillable = ['nombre', 'url'];
+    protected $fillable = ['nombre', 'url', 'orden_id'];
 
     public function archivo()
     {
