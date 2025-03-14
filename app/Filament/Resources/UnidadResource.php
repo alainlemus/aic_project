@@ -45,9 +45,8 @@ class UnidadResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('nombre')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('municipio_id')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('municipio.nombre')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

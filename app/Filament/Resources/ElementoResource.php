@@ -55,14 +55,19 @@ class ElementoResource extends Resource
                     ->autosize() // Ajusta la altura automáticamente según el contenido
                     ->nullable(), // Opcional, si permites que sea nulo
                 Forms\Components\Toggle::make('status')
+                    ->inline(true)
                     ->label('Status')
                     ->onColor('success') // Verde cuando está activo
                     ->offColor('danger') // Rojo cuando está inactivo
-                    ->default(true) // Por defecto 'ACTIVO'
+                    ->default(true)
                     ->onIcon('heroicon-s-check') // Icono de check cuando está activo
                     ->offIcon('heroicon-s-x-mark') // Icono de X cuando está inactivo
-                    ->required()
-                    ->dehydrateStateUsing(fn ($state) => $state ? 'ACTIVO' : 'INACTIVO'), // Convierte true/false a ENUM
+                    ->afterStateHydrated(function ($state, callable $set, $record) {
+                        if ($record) {
+                            $set('status', $record->status === 'ACTIVO');
+                        }
+                    })
+                    ->required(), // Convierte true/false a ENUM
             ]);
     }
 
@@ -71,21 +76,30 @@ class ElementoResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('no_empleado')
+                    ->badge()
+                    ->color('info')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('cargo')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('nombre')
+                        ->searchable(),
                 Tables\Columns\TextColumn::make('apellido_paterno')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('apellido_materno')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('nombre')
+                Tables\Columns\TextColumn::make('unidad.nombre')
+                    ->label('Unidad')
+                    ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('id_unidad')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('observaciones')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('status'),
+                /*Tables\Columns\TextColumn::make('observaciones')
+                    ->searchable(),*/
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'ACTIVO' => 'success',
+                        'INACTIVO' => 'danger',
+                    })
+                    ->extraAttributes(['class' => 'font-bold']),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -106,23 +120,6 @@ class ElementoResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    // Convertir id_unidad a integer antes de crear
-    public static function getModelData(array $data): array
-    {
-        $data['id_unidad'] = (int) $data['id_unidad'];
-        return $data;
-    }
-
-    protected static function mutateFormDataBeforeCreate(array $data): array
-    {
-        return static::getModelData($data);
-    }
-
-    protected static function mutateFormDataBeforeSave(array $data): array
-    {
-        return static::getModelData($data);
     }
 
     public static function getRelations(): array
