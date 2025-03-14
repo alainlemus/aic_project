@@ -23,6 +23,8 @@ class UnidadResource extends Resource
 
     protected static ?string $navigationGroup = 'Elementos';
 
+    protected static ?string $description = 'EN ESTE MODULO SE VEN TODOS LOS ELEMENTOS REGISTRADOS EN EL SISTEMA';
+
     public static function form(Form $form): Form
     {
         return $form
