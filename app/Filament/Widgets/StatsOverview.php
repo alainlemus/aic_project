@@ -9,8 +9,12 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class StatsOverview extends BaseWidget
 {
+    protected static ?int $sort = 1;
     protected ?string $heading = 'Estadisticas Generales';
     protected ?string $description = 'En las tarjetas se muestra información de las ordenes y su status.';
+
+    protected static bool $isLazy = true;
+    protected static ?string $pollingInterval =  '15s';
 
     protected function getStats(): array
     {
@@ -22,17 +26,18 @@ class StatsOverview extends BaseWidget
         $pendiente = Orden::where('status','PENDIENTE')->count();
 
         return [
-            Stat::make('Número total de Ordenes', $total, 'info')
-                ->icon('heroicon-o-wallet', IconPosition::Before),
-            Stat::make('Ordenes Recibidas',  $recibido, 'info')
+            Stat::make('Número total de Ordenes', $total)
+                ->icon('heroicon-o-wallet', IconPosition::Before)
+                ->color('success'),
+            Stat::make('Ordenes Recibidas',  $recibido)
                 ->icon('heroicon-o-rectangle-stack', IconPosition::Before),
-            Stat::make('Ordenes Cumplidas',  $cumplido, 'success')
+            Stat::make('Ordenes Cumplidas',  $cumplido)
                 ->icon('heroicon-o-check-circle', IconPosition::Before),
-            Stat::make('Ordenes Informadas',  $informado, 'primary')
+            Stat::make('Ordenes Informadas',  $informado)
                 ->icon('heroicon-o-identification', IconPosition::Before),
-            Stat::make('Ordenes Canceladas',  $cancelado, 'danger')
+            Stat::make('Ordenes Canceladas',  $cancelado)
                 ->icon('heroicon-o-x-circle', IconPosition::Before),
-            Stat::make('Ordenes Pendientes',  $pendiente, 'success')
+            Stat::make('Ordenes Pendientes',  $pendiente)
                 ->icon('heroicon-o-receipt-refund', IconPosition::Before),
         ];
     }

@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UnidadResource\Pages;
 use App\Filament\Resources\UnidadResource\RelationManagers;
+use App\Models\Elemento;
 use App\Models\Unidad;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -29,9 +30,16 @@ class UnidadResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nombre')
+                /*Forms\Components\TextInput::make('nombre')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255),*/
+                    Forms\Components\Select::make('elemento_id')
+                    ->label('Elemento')
+                    ->relationship('elemento', 'nombre') // Relación con el modelo Elemento
+                    ->searchable() // Habilita la búsqueda
+                    ->preload() // Carga opciones iniciales
+                    ->required()
+                    ->getOptionLabelFromRecordUsing(fn (Elemento $record) => "{$record->nombre} {$record->apellido_paterno} {$record->apellido_materno} - {$record->no_empleado}"),
                 Forms\Components\Select::make('municipio_id')
                     ->label('Municipio')
                     ->relationship('municipio', 'nombre') // Relación con el modelo Municipio

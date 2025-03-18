@@ -11,9 +11,12 @@ use Illuminate\Support\Carbon;
 
 class OrdenesPorEstadoChart extends ChartWidget
 {
-    protected static ?string $heading = 'Ordenes por elemento';
+    protected static ?int $sort = 3;
+    protected static ?string $heading = 'Ordenes por Status';
 
-    // Filtros disponibles
+
+
+    // filtro elementos
     protected function getFilters(): ?array
     {
         $elementos = Elemento::all()->mapWithKeys(function ($elemento) {
@@ -28,13 +31,15 @@ class OrdenesPorEstadoChart extends ChartWidget
     protected function getData(): array
     {
 
-        $filters = $this->getFilters();
+        $filtroElemento = $this->getFilters();
+
+        //dd($this->filter, $elementos, $filtros);
 
         // Consulta base
         $query = Orden::query();
 
         // Filtro por elemento
-        if (!empty($filters)) {
+        if (!empty($filtroElemento )) {
             $query->where('elemento_id',  $this->filter);
         }
 
@@ -43,6 +48,18 @@ class OrdenesPorEstadoChart extends ChartWidget
             ->groupBy('status')
             ->pluck('count', 'status')
             ->toArray();
+
+            /* // Definir colores dinámicos
+             $colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#8D8D8D', '#D32F2F'];
+             $datasets = [];
+
+             foreach ($data as $status => $count) {
+                 $datasets[] = [
+                     'label' => ucfirst(strtolower($status)), // Convertir a título
+                     'data' => [$count], // Chart.js espera arrays de datos
+                     'backgroundColor' => $colors[array_rand($colors)], // Color aleatorio de la lista
+                 ];
+             }*/
 
             return [
                 'datasets' => [
