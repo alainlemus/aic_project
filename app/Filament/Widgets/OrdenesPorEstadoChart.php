@@ -12,9 +12,7 @@ use Illuminate\Support\Carbon;
 class OrdenesPorEstadoChart extends ChartWidget
 {
     protected static ?int $sort = 4;
-    protected static ?string $heading = 'Ordenes por Status';
-
-
+    protected static ?string $heading = 'Ordenes por Elemento y Status';
 
     // filtro elementos
     protected function getFilters(): ?array

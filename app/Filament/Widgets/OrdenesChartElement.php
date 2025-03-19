@@ -37,7 +37,6 @@ class OrdenesChartElement extends ApexChartWidget
      */
     protected function getOptions(): array
     {
-        //dd($this->filterFormData);
         $elemento = $this->filterFormData['elemento_id'];
         $dateStart = $this->filterFormData['date_start'];
         $dateEnd = $this->filterFormData['date_end'];
@@ -53,9 +52,7 @@ class OrdenesChartElement extends ApexChartWidget
         ->groupBy('status')
         ->get();
 
-        //dd($data,$elemento);
-        //dd(now());
-        \Illuminate\Support\Facades\Log::info("Seleccion de filtros, elemento: {$elemento},  fecha inicio: " . $dateStart . ', fecha fin: ' . $dateEnd . ' , datos: ' . $data);
+        //\Illuminate\Support\Facades\Log::info("Seleccion de filtros, elemento: {$elemento},  fecha inicio: " . $dateStart . ', fecha fin: ' . $dateEnd . ' , datos: ' . $data);
 
         // Definir los posibles estados
         $statuses = ['RECIBIDO', 'CUMPLIDO', 'INFORMADO', 'CANCELADO', 'PENDIENTE'];
@@ -66,7 +63,7 @@ class OrdenesChartElement extends ApexChartWidget
         return [
             'chart' => [
                 'type' => 'bar',
-                'height' => 300,
+                'height' => 600,
             ],
             'series' => [
                 [

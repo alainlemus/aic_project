@@ -17,17 +17,17 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
 
-        User::factory(100)->create();
+        User::factory(20)->create();
 
         $this->call(MunicipiosSeeder::class);
 
         $this->call(TiposOrdenesSeeder::class);
 
-        Unidad::factory(100)->create();
+        Unidad::factory(500)->create();
 
         Elemento::factory(100)->create();
 
-        Orden::factory(100)->create();
+        Orden::factory(10000)->create();
 
         User::factory()->create([
             'name' => 'Alain Lemus Muñoz',

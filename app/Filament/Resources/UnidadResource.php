@@ -26,6 +26,8 @@ class UnidadResource extends Resource
 
     protected static ?string $description = 'EN ESTE MODULO SE VEN TODOS LOS ELEMENTOS REGISTRADOS EN EL SISTEMA';
 
+    protected static ?string $navigationBadgeTooltip = 'Número de unidades registrados';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -97,5 +99,15 @@ class UnidadResource extends Resource
             'create' => Pages\CreateUnidad::route('/create'),
             'edit' => Pages\EditUnidad::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'info';
     }
 }

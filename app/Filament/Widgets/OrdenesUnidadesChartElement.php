@@ -52,7 +52,7 @@ class OrdenesUnidadesChartElement extends ApexChartWidget
         ->get();
 
 
-        \Illuminate\Support\Facades\Log::info("Seleccion de filtros, unidad: {$unidad},  fecha inicio: " . $dateStart . ', fecha fin: ' . $dateEnd . ' , datos: ' . $data);
+        //\Illuminate\Support\Facades\Log::info("Seleccion de filtros, unidad: {$unidad},  fecha inicio: " . $dateStart . ', fecha fin: ' . $dateEnd . ' , datos: ' . $data);
 
         // Definir los posibles estados
         $statuses = ['RECIBIDO', 'CUMPLIDO', 'INFORMADO', 'CANCELADO', 'PENDIENTE'];
@@ -63,7 +63,7 @@ class OrdenesUnidadesChartElement extends ApexChartWidget
         return [
             'chart' => [
                 'type' => 'bar',
-                'height' => 400,
+                'height' => 276,
             ],
             'series' => [
                 [

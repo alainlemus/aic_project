@@ -28,6 +28,8 @@ class OrdenResource extends Resource
 
     protected static ?string $navigationGroup = 'Ordenes';
 
+    protected static ?string $navigationBadgeTooltip = 'Número de ordenes registrados';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -92,28 +94,6 @@ class OrdenResource extends Resource
                     ->sortable()
                     ->searchable()
                     ->formatStateUsing(fn (Orden $record) => "{$record->elemento->nombre} {$record->elemento->apellido_paterno} {$record->elemento->apellido_materno}"),
-                /*Tables\Columns\TextColumn::make('archivos')
-                    ->label('Archivos')
-                    ->formatStateUsing(function (Orden $record) {
-                        \Illuminate\Support\Facades\Log::info("Procesando archivos para orden {$record->id}: " . $record->archivos->toJson());
-
-                        if ($record->archivos->isEmpty()) {
-                            return 'Sin archivos';
-                        }
-
-                        $links = $record->archivos->map(function ($archivo) {
-                            $link = sprintf(
-                                '<a href="#" wire:click.prevent="$dispatch(\'openModal\', { component: \'view_pdf\', arguments: { ruta: \'%s\' } })" class="text-blue-500 hover:underline">%s</a>',
-                                $archivo->url,
-                                $archivo->nombre
-                            );
-                            \Illuminate\Support\Facades\Log::info("Enlace generado para orden {$archivo->orden_id}: {$link}");
-                            return $link;
-                        })->implode('<br>');
-
-                        return $links;
-                    })
-                    ->html(),*/
                 Tables\Columns\ViewColumn::make('archivos')
                     ->label('Archivos')
                     ->getStateUsing(function (Orden $record) {
@@ -173,5 +153,15 @@ class OrdenResource extends Resource
             'create' => Pages\CreateOrden::route('/create'),
             'edit' => Pages\EditOrden::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'info';
     }
 }
