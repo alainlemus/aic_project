@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Elemento;
 use App\Models\Unidad;
 use App\Models\User;
+use App\Models\Orden;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -16,15 +17,17 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
 
-        User::factory(10)->create();
+        User::factory(100)->create();
 
         $this->call(MunicipiosSeeder::class);
 
         $this->call(TiposOrdenesSeeder::class);
 
-        Unidad::factory(10)->create();
+        Unidad::factory(100)->create();
 
-        Elemento::factory(10)->create();
+        Elemento::factory(100)->create();
+
+        Orden::factory(100)->create();
 
         User::factory()->create([
             'name' => 'Alain Lemus Muñoz',

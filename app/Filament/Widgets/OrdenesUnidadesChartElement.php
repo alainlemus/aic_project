@@ -2,30 +2,30 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Elemento;
+use App\Models\Unidad;
 use App\Models\Orden;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
-class OrdenesChartElement extends ApexChartWidget
+class OrdenesUnidadesChartElement extends ApexChartWidget
 {
-    protected int | string | array $columnSpan = 'full';
-    protected static ?int $sort = 2;
+    //protected int | string | array $columnSpan = 'full';
+    protected static ?int $sort = 3;
     /**
      * Chart Id
      *
      * @var string
      */
-    protected static ?string $chartId = 'ordenesChartElement';
+    protected static ?string $chartId = 'ordenesUnidadesChartElement';
 
     /**
      * Widget Title
      *
      * @var string|null
      */
-    protected static ?string $heading = 'Ordenes por Elemento: Se muestran las ordenes por status filtrando por elemento y rango de fechas';
-    //protected static ?string $subheading = 'Se muestran las ordenes por status filtrando por elemento y rango de fechas';
+    protected static ?string $heading = 'Ordenes por Unidad: Se muestran las ordenes por status filtrando por unidad y rango de fechas';
+    //protected static ?string $subheading = 'Se muestran las ordenes por status filtrando por unidad y rango de fechas';
 
     //protected static ?string $footer = 'Ordenes por status, segun el filtro.';
 
@@ -37,25 +37,22 @@ class OrdenesChartElement extends ApexChartWidget
      */
     protected function getOptions(): array
     {
-        //dd($this->filterFormData);
-        $elemento = $this->filterFormData['elemento_id'];
-        $dateStart = $this->filterFormData['date_start'];
-        $dateEnd = $this->filterFormData['date_end'];
+        $unidad = $this->filterFormData['unidad_id'] ?? null;
+        $dateStart = $this->filterFormData['date_start'] ?? now()->subMonth();
+        $dateEnd = $this->filterFormData['date_end'] ?? now();
 
-        $data = Orden::whereBetween('created_at', [
-            $this->filterFormData['date_start'] ?? now()->subMonth(),
-            $this->filterFormData['date_end'] ?? now()
-        ])
-        ->when($this->filterFormData['elemento_id'] ?? null, fn($query, $elemento) =>
-            $query->where('elemento_id', $elemento)
-        )
+        $data = Orden::whereBetween('created_at', [$dateStart, $dateEnd])
+        ->when($unidad, function ($query) use ($unidad) {
+            $query->whereHas('elemento', function ($query) use ($unidad) {
+                $query->where('id_unidad', $unidad);
+            });
+        })
         ->selectRaw('status, COUNT(*) as count')
         ->groupBy('status')
         ->get();
 
-        //dd($data,$elemento);
-        //dd(now());
-        \Illuminate\Support\Facades\Log::info("Seleccion de filtros, elemento: {$elemento},  fecha inicio: " . $dateStart . ', fecha fin: ' . $dateEnd . ' , datos: ' . $data);
+
+        \Illuminate\Support\Facades\Log::info("Seleccion de filtros, unidad: {$unidad},  fecha inicio: " . $dateStart . ', fecha fin: ' . $dateEnd . ' , datos: ' . $data);
 
         // Definir los posibles estados
         $statuses = ['RECIBIDO', 'CUMPLIDO', 'INFORMADO', 'CANCELADO', 'PENDIENTE'];
@@ -66,7 +63,7 @@ class OrdenesChartElement extends ApexChartWidget
         return [
             'chart' => [
                 'type' => 'bar',
-                'height' => 300,
+                'height' => 400,
             ],
             'series' => [
                 [
@@ -89,10 +86,10 @@ class OrdenesChartElement extends ApexChartWidget
                     ],
                 ],
             ],
-            'colors' => ['#f59e0b'],
+            'colors' => ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
             'plotOptions' => [
                 'bar' => [
-                    'borderRadius' => 3,
+                    'borderRadius' => 5,
                     'horizontal' => false,
                 ],
             ],
@@ -102,11 +99,11 @@ class OrdenesChartElement extends ApexChartWidget
     protected function getFormSchema(): array
     {
         return [
-            Select::make('elemento_id')
-                ->label('Elemento')
-                ->options(Elemento::all()->mapWithKeys(function ($item) {
+            Select::make('unidad_id')
+                ->label('Unidad')
+                ->options(Unidad::all()->mapWithKeys(function ($item) {
                     return [
-                        $item->id => "{$item->nombre} {$item->apellido_paterno} {$item->apellido_materno}"
+                        $item->id => "{$item->nombre}"
                     ];
                 }))
                 ->searchable() // Habilita la búsqueda

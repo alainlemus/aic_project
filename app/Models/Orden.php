@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Orden extends Model
 {
+    use HasFactory;
+
     protected $table = 'ordenes';
     protected $fillable = ['nombre', 'status', 'tipo_orden_id', 'elemento_id'];
 
