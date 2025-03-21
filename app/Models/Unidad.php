@@ -19,6 +19,6 @@ class Unidad extends Model
 
     public function elementos()
     {
-        return $this->hasMany(Elemento::class, 'id_unidad');
+        return $this->hasMany(Elemento::class, 'id_elmento');
     }
 }

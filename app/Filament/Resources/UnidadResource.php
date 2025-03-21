@@ -32,10 +32,10 @@ class UnidadResource extends Resource
     {
         return $form
             ->schema([
-                /*Forms\Components\TextInput::make('nombre')
+                Forms\Components\TextInput::make('nombre')
                     ->required()
-                    ->maxLength(255),*/
-                    Forms\Components\Select::make('elemento_id')
+                    ->maxLength(255),
+                Forms\Components\Select::make('elemento_id')
                     ->label('Elemento')
                     ->relationship('elemento', 'nombre') // Relación con el modelo Elemento
                     ->searchable() // Habilita la búsqueda

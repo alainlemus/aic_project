@@ -82,6 +82,8 @@ class OrdenResource extends Resource
             ->striped()
             ->query(Orden::with('archivos')) // Carga ansiosa de la relación archivos
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('nombre')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status'),
