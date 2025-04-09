@@ -72,4 +72,5 @@ class AdminPanelProvider extends PanelProvider
                 FilamentApexChartsPlugin::make()
             ]);
     }
+
 }
