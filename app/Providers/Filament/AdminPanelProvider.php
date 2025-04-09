@@ -34,8 +34,8 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogoHeight('60px') // Altura personalizada
             ->favicon(asset('logo/aic.png'))*/
             ->colors([
-                'primary' => Color::Guinda,
-                'secondary' => Color::Dorado,
+                'primary' => '#611232',
+                'secondary' =>  '#a57f2c',
             ])
             ->darkMode(false)
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
