@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Forms\Components\Section;
 
 class TipoOrdenResource extends Resource
 {
@@ -26,9 +27,13 @@ class TipoOrdenResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nombre')
-                    ->required()
-                    ->maxLength(255),
+                Section::make('Datos del tipo de orden')
+                ->description('Registra los datos del tipo de orden')
+                    ->schema([
+                        Forms\Components\TextInput::make('nombre')
+                            ->required()
+                            ->maxLength(255),
+                    ])
             ]);
     }
 
@@ -37,13 +42,18 @@ class TipoOrdenResource extends Resource
         return $table
             ->striped()
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('Id')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('nombre')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Fecha de Registro')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Fecha de Actualización')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

@@ -3,15 +3,13 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\MunicipioResource\Pages;
-use App\Filament\Resources\MunicipioResource\RelationManagers;
 use App\Models\Municipio;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\Section;
 
 class MunicipioResource extends Resource
 {
@@ -27,12 +25,17 @@ class MunicipioResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nombre')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('codio_postal')
-                    ->required()
-                    ->maxLength(255),
+                Section::make('Datos del municipio')
+                ->description('Registra los datos del municipio')
+                    ->schema([
+                        Forms\Components\TextInput::make('nombre')
+                            ->label('Nombre')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('codio_postal')
+                            ->required()
+                            ->maxLength(255),
+                    ])
             ]);
     }
 
@@ -41,15 +44,21 @@ class MunicipioResource extends Resource
         return $table
             ->striped()
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('Id')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('nombre')
+                    ->label('Nombre')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('codigo_postal')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Fecha de Registro')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Fecha de Actualización')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

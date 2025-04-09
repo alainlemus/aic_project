@@ -3,8 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UnidadResource\Pages;
-use App\Filament\Resources\UnidadResource\RelationManagers;
-use App\Models\Elemento;
 use App\Models\Unidad;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -12,7 +10,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\Section;
 
 class UnidadResource extends Resource
 {
@@ -22,7 +20,7 @@ class UnidadResource extends Resource
 
     protected static ?string $label = 'Unidades';
 
-    protected static ?string $navigationGroup = 'Elementos';
+    protected static ?string $navigationGroup = 'Base de datos';
 
     protected static ?string $description = 'EN ESTE MODULO SE VEN TODOS LOS ELEMENTOS REGISTRADOS EN EL SISTEMA';
 
@@ -32,22 +30,45 @@ class UnidadResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nombre')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Select::make('elemento_id')
-                    ->label('Elemento')
-                    ->relationship('elemento', 'nombre') // Relación con el modelo Elemento
-                    ->searchable() // Habilita la búsqueda
-                    ->preload() // Carga opciones iniciales
-                    ->required()
-                    ->getOptionLabelFromRecordUsing(fn (Elemento $record) => "{$record->nombre} {$record->apellido_paterno} {$record->apellido_materno} - {$record->no_empleado}"),
-                Forms\Components\Select::make('municipio_id')
-                    ->label('Municipio')
-                    ->relationship('municipio', 'nombre') // Relación con el modelo Municipio
-                    ->searchable() // Habilita la búsqueda
-                    ->preload() // Carga opciones iniciales
-                    ->required(),
+                Section::make('Datos de la Unidad')
+                ->description('Registra los datos de la unidad')
+                    ->schema([
+                        Forms\Components\TextInput::make('nombre')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\Select::make('municipio_id')
+                            ->label('Municipio')
+                            ->relationship('municipio', 'nombre') // Relación con el modelo Municipio
+                            ->searchable() // Habilita la búsqueda
+                            ->preload() // Carga opciones iniciales
+                            ->required(),
+                            Forms\Components\TextInput::make('estado_de_fuerza')
+                            ->label('Estado de Fuerza')
+                            ->numeric()
+                            ->required()
+                            ->default(0),
+                        Forms\Components\TextInput::make('vehiculos')
+                            ->label('Vehículos')
+                            ->numeric()
+                            ->required()
+                            ->default(0),
+                        Forms\Components\Textarea::make('observaciones')
+                            ->label('Observaciones')
+                            ->maxLength(255)
+                            ->rows(4) // Altura inicial en filas
+                            ->autosize() // Ajusta la altura automáticamente según el contenido
+                            ->nullable(), // Opcional, si permites que sea nulo
+                        Forms\Components\Select::make('encargado_id')
+                            ->label('Encargado de Unidad')
+                            ->relationship(
+                                name: 'encargado',
+                                titleAttribute: 'nombre',
+                                modifyQueryUsing: fn (Builder $query) => $query->where('status', 'ACTIVO')
+                            ) // Relación con el modelo Elemento
+                            ->searchable()
+                            ->preload()
+                            ->required(),
+                    ])
             ]);
     }
 
@@ -56,15 +77,31 @@ class UnidadResource extends Resource
         return $table
             ->striped()
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('Id')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('nombre')
+                    ->label('Nombre de la Unidad')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('municipio.nombre')
+                    ->label('Municipio')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('vehiculos')
+                    ->label('Numero de Vehículos')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('estado_de_fuerza')
+                    ->label('Estado de Fuerza')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('encargado.nombre')
+                    ->label('Ecargado de Unidad')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Fecha de Registro')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Fecha de Actualización')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

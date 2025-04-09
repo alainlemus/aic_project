@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
 
         Elemento::factory(100)->create();
 
-        Orden::factory(10000)->create();
+        Orden::factory(1000)->create();
 
         User::factory()->create([
             'name' => 'Alain Lemus Muñoz',

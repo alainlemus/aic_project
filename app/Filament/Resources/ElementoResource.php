@@ -3,15 +3,13 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ElementoResource\Pages;
-use App\Filament\Resources\ElementoResource\RelationManagers;
 use App\Models\Elemento;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\Section;
 
 class ElementoResource extends Resource
 {
@@ -21,7 +19,7 @@ class ElementoResource extends Resource
 
     protected static ?string $label = 'Elementos';
 
-    protected static ?string $navigationGroup = 'Elementos';
+    protected static ?string $navigationGroup = 'Base de datos';
 
     protected static ?string $navigationBadgeTooltip = 'Número de elementos registrados';
 
@@ -29,47 +27,51 @@ class ElementoResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('no_empleado')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('cargo')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('apellido_paterno')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('apellido_materno')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('nombre')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Select::make('id_unidad')
-                    ->label('Unidad')
-                    ->relationship('unidad', 'nombre') // Relación con el modelo Municipio
-                    ->searchable() // Habilita la búsqueda
-                    ->preload() // Carga opciones iniciales
-                    ->required(),
-                Forms\Components\Textarea::make('observaciones')
-                    ->label('Observaciones')
-                    ->maxLength(255)
-                    ->rows(4) // Altura inicial en filas
-                    ->autosize() // Ajusta la altura automáticamente según el contenido
-                    ->nullable(), // Opcional, si permites que sea nulo
-                Forms\Components\Toggle::make('status')
-                    ->inline(true)
-                    ->label('Status')
-                    ->onColor('success') // Verde cuando está activo
-                    ->offColor('danger') // Rojo cuando está inactivo
-                    ->default(true)
-                    ->onIcon('heroicon-s-check') // Icono de check cuando está activo
-                    ->offIcon('heroicon-s-x-mark') // Icono de X cuando está inactivo
-                    ->afterStateHydrated(function ($state, callable $set, $record) {
-                        if ($record) {
-                            $set('status', $record->status === 'ACTIVO');
-                        }
-                    })
-                    ->required(), // Convierte true/false a ENUM
+                Section::make('Datos del Elemento')
+                    ->description('Registra los datos del elemento')
+                    ->schema([
+                        Forms\Components\TextInput::make('no_empleado')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('cargo')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('apellido_paterno')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('apellido_materno')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('nombre')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\Select::make('id_unidad')
+                            ->label('Unidad')
+                            ->relationship('unidad', 'nombre') // Relación con el modelo Municipio
+                            ->searchable() // Habilita la búsqueda
+                            ->preload() // Carga opciones iniciales
+                            ->required(),
+                        Forms\Components\Textarea::make('observaciones')
+                            ->label('Observaciones')
+                            ->maxLength(255)
+                            ->rows(4) // Altura inicial en filas
+                            ->autosize() // Ajusta la altura automáticamente según el contenido
+                            ->nullable(), // Opcional, si permites que sea nulo
+                        Forms\Components\Toggle::make('status')
+                            ->inline(true)
+                            ->label('Status')
+                            ->onColor('success') // Verde cuando está activo
+                            ->offColor('danger') // Rojo cuando está inactivo
+                            ->default(true)
+                            ->onIcon('heroicon-s-check') // Icono de check cuando está activo
+                            ->offIcon('heroicon-s-x-mark') // Icono de X cuando está inactivo
+                            ->afterStateHydrated(function ($state, callable $set, $record) {
+                                if ($record) {
+                                    $set('status', $record->status === 'ACTIVO');
+                                }
+                            })
+                            ->required(), // Convierte true/false a ENUM
+                    ])
             ]);
     }
 
@@ -78,6 +80,9 @@ class ElementoResource extends Resource
         return $table
             ->striped()
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('Id')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('no_empleado')
                     ->badge()
                     ->color('info')
@@ -104,10 +109,12 @@ class ElementoResource extends Resource
                     })
                     ->extraAttributes(['class' => 'font-bold']),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Fecha de Registro')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Fecha de Actualización')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

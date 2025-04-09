@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('apellido_paterno', 255);
             $table->string('apellido_materno', 255);
             $table->string('nombre', 255);
-            $table->foreignId('id_unidad')->constrained('unidades');
+            $table->foreignId('id_unidad')->nullable()->constrained('unidades')->onDelete('cascade');
             $table->string('observaciones', 255)->nullable();
             $table->enum('status', ['ACTIVO', 'INACTIVO']);
             $table->timestamps();

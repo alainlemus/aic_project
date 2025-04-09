@@ -10,7 +10,7 @@ class Unidad extends Model
     use HasFactory; // Agrega este trait
 
     protected $table = 'unidades';
-    protected $fillable = ['nombre', 'municipio_id'];
+    protected $fillable = ['nombre', 'municipio_id', 'observaciones', 'estado_de_fuerza', 'vehiculos', 'encargado_id'];
 
     public function municipio()
     {
@@ -19,6 +19,11 @@ class Unidad extends Model
 
     public function elementos()
     {
-        return $this->hasMany(Elemento::class, 'id_elmento');
+        return $this->hasMany(Elemento::class, 'id_unidad');
+    }
+
+    public function encargado()
+    {
+        return $this->belongsTo(Elemento::class, 'encargado_id');
     }
 }

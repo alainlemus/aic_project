@@ -28,6 +28,7 @@ class StatsOverview extends BaseWidget
         return [
             Stat::make('Número total de Ordenes', $total)
                 ->icon('heroicon-o-wallet', IconPosition::Before)
+                ->chart([7, 2, 10, 3, 15, 4, 17])
                 ->color('success'),
             Stat::make('Ordenes Recibidas',  $recibido)
                 ->icon('heroicon-o-rectangle-stack', IconPosition::Before),

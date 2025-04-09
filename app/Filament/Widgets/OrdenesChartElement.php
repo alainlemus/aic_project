@@ -10,7 +10,7 @@ use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class OrdenesChartElement extends ApexChartWidget
 {
-    protected int | string | array $columnSpan = 'full';
+
     protected static ?int $sort = 2;
     /**
      * Chart Id
@@ -24,8 +24,8 @@ class OrdenesChartElement extends ApexChartWidget
      *
      * @var string|null
      */
-    protected static ?string $heading = 'Ordenes por Elemento: Se muestran las ordenes por status filtrando por elemento y rango de fechas';
-    //protected static ?string $subheading = 'Se muestran las ordenes por status filtrando por elemento y rango de fechas';
+    protected static ?string $heading = 'Ordenes por Elemento';
+    protected static ?string $subheading = 'Se muestran las ordenes por status filtrando por elemento y rango de fechas';
 
     //protected static ?string $footer = 'Ordenes por status, segun el filtro.';
 
@@ -63,7 +63,7 @@ class OrdenesChartElement extends ApexChartWidget
         return [
             'chart' => [
                 'type' => 'bar',
-                'height' => 600,
+
             ],
             'series' => [
                 [

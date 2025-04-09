@@ -16,7 +16,8 @@ use Filament\Tables\Actions\Action;
 use Filament\Actions\StaticAction;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Infolists\Components\Livewire;
-use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Components\Section;
 
 class OrdenResource extends Resource
 {
@@ -34,45 +35,53 @@ class OrdenResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nombre')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Select::make('status')
-                    ->label('Status')
-                    ->options([
-                        'RECIBIDO' => 'Recibido',
-                        'CUMPLIDO' => 'Cumplido',
-                        'INFORMADO' => 'Informado',
-                        'CANCELADO' => 'Cancelado',
-                        'PENDIENTE' => 'Pendiente',
+                Section::make('Datos de la Orden')
+                ->description('Registra los datos de la orden')
+                    ->schema([
+                        Forms\Components\TextInput::make('nombre')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\Select::make('status')
+                            ->label('Status')
+                            ->options([
+                                'RECIBIDO' => 'Recibido',
+                                'CUMPLIDO' => 'Cumplido',
+                                'INFORMADO' => 'Informado',
+                                'CANCELADO' => 'Cancelado',
+                                'PENDIENTE' => 'Pendiente',
+                            ])
+                            ->default('RECIBIDO') // Valor por defecto
+                            ->required(),
+                        Forms\Components\Select::make('tipo_orden_id')
+                            ->label('Tipo de orden')
+                            ->relationship('tipoOrden', 'nombre') // Relación con el modelo tipoOrden
+                            ->searchable() // Habilita la búsqueda
+                            ->preload() // Carga opciones iniciales
+                            ->required(),
+                        Forms\Components\Select::make('elemento_id')
+                            ->label('Elemento')
+                            ->relationship(
+                                name: 'elemento',
+                                titleAttribute: 'nombre',
+                                modifyQueryUsing: fn (Builder $query) => $query->where('status', 'ACTIVO')
+                            ) // Relación con el modelo Elemento
+                            ->searchable() // Habilita la búsqueda
+                            ->preload() // Carga opciones iniciales
+                            ->required()
+                            ->getOptionLabelFromRecordUsing(fn (Elemento $record) => "{$record->nombre} {$record->apellido_paterno} {$record->apellido_materno} - {$record->no_empleado}"), // Combina nombre y apellido_paterno
+                        Forms\Components\FileUpload::make('archivos')
+                            ->label('Archivos PDF')
+                            ->multiple() // Permite múltiples archivos
+                            ->acceptedFileTypes(['application/pdf']) // Solo PDFs
+                            ->maxFiles(20) // Máximo 20 archivos
+                            ->maxSize(5120) // Máximo 5 MB (5120 KB)
+                            ->directory('temp') // Carpeta en public/archivos
+                            ->preserveFilenames() // Conserva nombres originales
+                            ->required(false) // Opcional, cambia a true si es obligatorio
+                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                // Aquí manejarás el guardado en la tabla archivos después de crear la orden
+                            }),
                     ])
-                    ->default('RECIBIDO') // Valor por defecto
-                    ->required(),
-                Forms\Components\Select::make('tipo_orden_id')
-                    ->label('Tipo de orden')
-                    ->relationship('tipoOrden', 'nombre') // Relación con el modelo tipoOrden
-                    ->searchable() // Habilita la búsqueda
-                    ->preload() // Carga opciones iniciales
-                    ->required(),
-                Forms\Components\Select::make('elemento_id')
-                    ->label('Elemento')
-                    ->relationship('elemento', 'nombre') // Relación con el modelo Elemento
-                    ->searchable() // Habilita la búsqueda
-                    ->preload() // Carga opciones iniciales
-                    ->required()
-                    ->getOptionLabelFromRecordUsing(fn (Elemento $record) => "{$record->nombre} {$record->apellido_paterno} {$record->apellido_materno} - {$record->no_empleado}"), // Combina nombre y apellido_paterno
-                Forms\Components\FileUpload::make('archivos')
-                    ->label('Archivos PDF')
-                    ->multiple() // Permite múltiples archivos
-                    ->acceptedFileTypes(['application/pdf']) // Solo PDFs
-                    ->maxFiles(20) // Máximo 20 archivos
-                    ->maxSize(5120) // Máximo 5 MB (5120 KB)
-                    ->directory('temp') // Carpeta en public/archivos
-                    ->preserveFilenames() // Conserva nombres originales
-                    ->required(false) // Opcional, cambia a true si es obligatorio
-                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                        // Aquí manejarás el guardado en la tabla archivos después de crear la orden
-                    }),
             ]);
     }
 
@@ -96,17 +105,13 @@ class OrdenResource extends Resource
                     ->sortable()
                     ->searchable()
                     ->formatStateUsing(fn (Orden $record) => "{$record->elemento->nombre} {$record->elemento->apellido_paterno} {$record->elemento->apellido_materno}"),
-                Tables\Columns\ViewColumn::make('archivos')
-                    ->label('Archivos')
-                    ->getStateUsing(function (Orden $record) {
-                        return $record->archivos; // Devuelve la colección de archivos
-                    })
-                    ->view('filament.tables.columns.archivos'),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Fecha de Registro')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Fecha de Actualización')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

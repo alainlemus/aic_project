@@ -24,8 +24,8 @@ class OrdenesUnidadesChartElement extends ApexChartWidget
      *
      * @var string|null
      */
-    protected static ?string $heading = 'Ordenes por Unidad: Se muestran las ordenes por status filtrando por unidad y rango de fechas';
-    //protected static ?string $subheading = 'Se muestran las ordenes por status filtrando por unidad y rango de fechas';
+    protected static ?string $heading = 'Ordenes por Unidad';
+    protected static ?string $subheading = 'Se muestran las ordenes por status filtrando por unidad y rango de fechas';
 
     //protected static ?string $footer = 'Ordenes por status, segun el filtro.';
 
@@ -63,7 +63,7 @@ class OrdenesUnidadesChartElement extends ApexChartWidget
         return [
             'chart' => [
                 'type' => 'bar',
-                'height' => 276,
+
             ],
             'series' => [
                 [
